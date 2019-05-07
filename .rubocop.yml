@@ -21,3 +21,6 @@ Metrics/ClassLength:
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Style/Semicolon:
+  Enabled: false
