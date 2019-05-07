@@ -30,6 +30,8 @@ class Game
     conclusion
   end
 
+  private
+
   def intro
     welcome
     sleep(1)
@@ -37,6 +39,7 @@ class Game
 
   def set_player
     welcome_player
+    ask_name
   end
 
   def new_round
@@ -57,7 +60,6 @@ class Game
 
   def set_round
     clear_table unless @player.hands.empty?
-    ask_name
     initial_bet
   end
 

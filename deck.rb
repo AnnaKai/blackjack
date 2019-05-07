@@ -28,11 +28,4 @@ class Deck
   def need_extra?
     @cards.length < 52 / 2
   end
-
-  private
-
-  def new_shoe(num_decks)
-    @cards = []
-    build_shoe(num_decks)
-  end
 end
