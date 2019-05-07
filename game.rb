@@ -245,10 +245,6 @@ class Game
     play_more?
   end
 
-  def player_hand_lost(hand)
-    play_more? if @player.hands.empty?
-  end
-
   def can_hit?
     @dealer.hand.value < STAND_VALUE
   end
