@@ -244,7 +244,9 @@ class Game
           player.bankroll += 2 * hand.bet
           player.reset_bet(hand)
         elsif hand.value == dealer.hand.value
-          push(hand)
+          dealer_says("It's a tie for your #{HANDS_KEY_MAP[index]} Hand")
+          player.bankroll += hand.bet
+          player.reset_bet(hand)
         else
           dealer_says("Your #{HANDS_KEY_MAP[index]} Hand is lost to the dealer's\n")
           player.reset_bet(hand)
@@ -308,9 +310,9 @@ class Game
     @player.first_hand.insurance_bet = 0
   end
 
-  def push(hand = player.current_hand)
+  def push
     dealer_says("It's a Push!")
-    player.bankroll += hand.bet + hand.insurance_bet
+    @player.bankroll += @player.first_hand.bet + @player.first_hand.insurance_bet
     play_more?
   end
 
