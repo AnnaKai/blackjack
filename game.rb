@@ -116,7 +116,7 @@ class Game
       @player.first_hand.blackjack? ? push : player_busts
     else
       dealer_says("Dealer doesn't have a BlackJack")
-      reset_insurance if insurance? # insurance lost
+      reset_insurance if insurance?
       player_decides
     end
   end
@@ -245,9 +245,6 @@ class Game
           player.reset_bet(hand)
         elsif hand.value == dealer.hand.value
           push(hand)
-          #dealer_says("It's a tie!")
-          #player.bankroll += hand.bet
-          #player.reset_bet(hand)
         else
           dealer_says("Your #{HANDS_KEY_MAP[index]} Hand is lost to the dealer's\n")
           player.reset_bet(hand)
