@@ -18,10 +18,6 @@ class Player
     bet >= 10 && bet <= @bankroll
   end
 
-  def reset_bet(hand)
-    hand.bet = 0
-  end
-
   def side_bet
     side_bet = first_hand.bet / 2
     first_hand.insurance_bet += side_bet

@@ -64,8 +64,8 @@ class Game
   end
 
   def ask_name
-    dealer_says("Please, enter your name")
-    player.name = gets.chomp
+    ask_name_notice
+    @player.name = gets.chomp
   end
 
   def clear_table
@@ -84,7 +84,7 @@ class Game
   end
 
   def deal_cards
-    puts "\nDealing cards...\n"
+    dealing_cards_notice
     sleep(1)
     2.times do
       @player.first_hand.add_card(@deck.deal_card)
@@ -93,15 +93,10 @@ class Game
   end
 
   def show_hands
-    dealer_says("Your Cards are: \n")
-    @player.hands.each do |hand|
-      puts hand.cards
-      hint("[Your Hand is currently valued at: #{hand.value}]\n")
-    end
+    card_value_notice(@player.name)
+    player_shows_hands
     sleep(1)
-    puts "\n"
-    dealer_says("Dealer's Cards are:")
-    puts "#{@dealer.hand.cards.first} \n[Hidden Card]\n\n"
+    dealer_shows_first_hand
   end
 
   def dealer_checks
@@ -109,15 +104,14 @@ class Game
   end
 
   def dealer_decides
-    puts "Dealer's checking his card...\n"
+    dealer_checks_notice
     sleep(2)
     if @dealer.hand.blackjack?
-      puts @dealer.hand.cards
-      dealer_says("Dealer has a BlackJack!\n")
+      dealer_shows_bc
       pay_insurance if insurance?
       @player.first_hand.blackjack? ? push : player_busts
     else
-      dealer_says("Dealer doesn't have a BlackJack")
+      dealer_without_bc
       reset_insurance if insurance?
       player_decides
     end
@@ -131,13 +125,13 @@ class Game
     end
   end
 
-  def suggest_options(hand = player.current_hand)
+  def suggest_options(hand = @player.current_hand)
     available_options = create_options(hand)
     answer = ""
     until available_options.key? answer
-      hand_num = player.current_hand_index
-      dealer_says("Croupier, you have the following options for your #{HANDS_KEY_MAP[hand_num]} Hand:\n")
-      puts("[Current Hand value is: #{hand.value}]")
+      hand_num = @player.current_hand_index
+      available_options_notice(hand_num)
+      hand_value_reminder(hand)
       show_options(available_options)
       answer = gets.chomp
     end
@@ -149,10 +143,6 @@ class Game
     end
   end
 
-  def show_options(options)
-    options.map { |option| puts "'#{option[0]}' for #{option[1]}" }.join(", ")
-  end
-
   def create_options(hand)
     options = STAND_KEY_MAP.merge(HIT_KEY_MAP)
     options.merge!(DOUBLE_DOWN_KEY_MAP) if hand.just_dealt? && player.hands.length == 1 && player.bankroll >= hand.bet
@@ -162,30 +152,28 @@ class Game
 
   def player_stands
     next_hand = @player.next_hand
-    dealer_says("Croupier, you [Stand]\n\n")
+    player_stands_notice
     player_decides(next_hand) unless next_hand.nil?
   end
 
   def player_splits(hand)
-    dealer_says("You [split] your hand and get 1 more card for each of your hands...")
+    player_splits_notice
     new_hand = player.split(hand)
     hand.add_card(@deck.deal_card)
     new_hand.add_card(@deck.deal_card)
-
     puts hand.cards
-    hint("[Your Hand value is #{hand.value}]\n")
-
+    hand_value_reminder(hand)
     puts new_hand.cards
-    hint("[Your Hand value is #{new_hand.value}]")
+    hand_value_reminder(new_hand)
     player_decides
   end
 
   def player_doubles(hand)
-    dealer_says("You [double down] your bet and take 1 more card")
+    player_dd_notice
     player.place_bet(hand, player.first_hand.bet)
     hand.add_card(@deck.deal_card)
     puts hand.cards
-    hint("Your Hand value is #{hand.value}")
+    hand_value_reminder(hand)
     if hand.value > MAX_POINTS
       player_busts
     elsif hand.value == MAX_POINTS
@@ -196,10 +184,10 @@ class Game
   end
 
   def player_hits(hand)
-    dealer_says("You decided to [hit]")
+    player_hits_notice
     @player.hit(hand, @deck.deal_card)
     puts hand.cards
-    hint("Your Hand is currently valued at: #{hand.value}")
+    hand_value_reminder(hand)
     if hand.value > MAX_POINTS
       hand_busts
     elsif hand.value == MAX_POINTS
@@ -220,57 +208,48 @@ class Game
   end
 
   def dealer_hits
-    dealer_says("Dealer takes one more card...")
+    dealer_hits_notice
     sleep(1)
     @dealer.hand.add_card(@deck.deal_card)
-    dealer_says("Dealer's cards are:")
-    puts @dealer.hand.cards
-    dealer_says("Dealer's card value is: #{@dealer.hand.value}")
+    card_value_notice(@dealer.name)
+    dealer_shows_cards
+    dealer_hand_value
     dealer_hits until @dealer.hand.value >= STAND_VALUE
   end
 
   def set_result
     sleep(1)
     if dealer.hand.bust?
-      dealer_says("Dealer Hand busts")
+      dealer_busts_notice
       player_wins
     else
-      hint("Dealer's checking his cards and comparing them to yours...\n")
+      dealer_checks_notice
       dealer_shows_cards
-      hint("Dealer's card value is #{dealer.hand.value}")
+      dealer_hand_value
       player.hands.each_with_index do |hand, index|
         if hand.bust?
           player.hands.delete(hand)
         elsif hand.value > dealer.hand.value
-          dealer_says("Your #{HANDS_KEY_MAP[index]} Hand wins. You get paid 1:1\n")
+          hand_wins_notice(index)
           player.bankroll += 2 * hand.bet
-          player.reset_bet(hand)
         elsif hand.value == dealer.hand.value
-          dealer_says("It's a tie for your #{HANDS_KEY_MAP[index]} Hand")
+          hand_pushes_notice(index)
           player.bankroll += hand.bet
-          player.reset_bet(hand)
         else
-          dealer_says("Your #{HANDS_KEY_MAP[index]} Hand is lost to the dealer's\n")
-          player.reset_bet(hand)
+          hand_lost_notice(index)
         end
       end
     end
-    puts "Croupier, your bankroll is $#{player.bankroll}"
+    bankroll_notice
     play_more?
   end
 
   def player_hand_lost(hand)
-    player.reset_bet(hand)
     play_more? if @player.hands.empty?
   end
 
   def can_hit?
     @dealer.hand.value < STAND_VALUE
-  end
-
-  def dealer_shows_cards
-    puts "Dealer shows his cards..."
-    puts @dealer.hand.cards
   end
 
   def dealer_has_ace?
@@ -285,12 +264,12 @@ class Game
     answers = %w[y n]
     answer = ""
     until answers.include? answer
-      puts "Would you like to make an insurance bet? y/n?"
+      ask_insurance
       answer = gets.chomp.downcase
       case answer
       when "y" then @player.side_bet
       when "n" then return
-      else puts "You should specify either y or n"
+      else wrong_answer
       end
     end
   end
@@ -313,47 +292,46 @@ class Game
   end
 
   def push
-    dealer_says("It's a Push!")
+    hand_pushes_notice(@player.current_hand_index)
     @player.bankroll += @player.first_hand.bet + @player.first_hand.insurance_bet
     play_more?
   end
 
   def player_wins
-    dealer_says("You win!")
+    player_wins_notice
     player.hands.each do |hand|
       player.bankroll += hand.bet * 2
-      player.reset_bet(hand)
     end
   end
 
   def player_wins_with_bc
     dealer_shows_cards
-    dealer_says("Congrats, you won with a BlackJack!")
+    player_wins_with_bc_notice
     bet = @player.first_hand.bet
     @player.bankroll += bet * 2.5
     play_more?
   end
 
   def player_busts
-    dealer_says("Sorry, #{@player.name}, you lost!")
+    player_busts
     sleep(1)
     play_more?
   end
 
   def play_more?
     if @player.bankrupt?
-      dealer_says("You're bankrupt, Croupier. Have a nice day and try again later")
+      bankrupt_warning
       @game_over = true
     else
       answers = %w[y n]
       answer = ""
       until answers.include?answer
-        puts "\nDo you want to play a new round, #{player.name}? y/n"
+        ask_play_again
         answer = gets.chomp.downcase
         case answer
         when "y" then new_round
         when "n" then @game_over = true
-        else puts "Please, specify correct answer"
+        else wrong_answer
         end
       end
     end
