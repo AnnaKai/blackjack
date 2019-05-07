@@ -1,21 +1,8 @@
+require "constants"
+
 module UiHelper
 
-  MAX_HANDS = 4
-  STAND_VALUE = 17
-  MAX_POINTS = 21
-
-  # Keys
-  STAND = "s".freeze
-  HIT = "h".freeze
-  DOUBLE_DOWN = "d".freeze
-  SPLIT = "p".freeze
-
-  STAND_KEY_MAP = { STAND => "Stand" }.freeze
-  HIT_KEY_MAP = { HIT => "Hit"}.freeze
-  DOUBLE_DOWN_KEY_MAP = { DOUBLE_DOWN => "Double Down"}.freeze
-  SPLIT_KEY_MAP = { SPLIT => "Split" }.freeze
-
-  HANDS_KEY_MAP = { 0 => "First", 1 => "Second", 2 => "Third", 3 => "Fourth" }.freeze
+  include Constants
 
   def welcome
     puts "\n>>> Welcome to The BlackJack Game! <<<\n\n"
@@ -53,8 +40,8 @@ module UiHelper
   end
 
   def dealer_shows_cards
-    puts "Dealer shows his cards..."
-    puts @dealer.hand.cards
+    dealer_shows_hand
+    spacer
   end
 
   def bankrupt_warning
@@ -67,6 +54,7 @@ module UiHelper
 
   def hand_value_reminder(hand)
     hint("Your Hand is currently valued at: #{hand.value}")
+    spacer
   end
 
   def dealer_hand_value
@@ -82,7 +70,8 @@ module UiHelper
   end
 
   def dealer_shows_bc
-    puts @dealer.hand.cards
+    dealer_shows_hand
+    spacer
     dealer_says("Dealer has a BlackJack!\n")
   end
 
@@ -98,15 +87,23 @@ module UiHelper
     dealer_says("Dealer Hand busts")
   end
 
+  def dealer_shows_hand
+    puts @dealer.hand.cards
+  end
+
   def ask_play_again
     puts "\nWould you like to play a new round, #{@player.name}? y/n"
   end
 
   def player_shows_hands
     @player.hands.each do |hand|
-      puts hand.cards
+      show_hand(hand)
       hint("[Your Hand is currently valued at: #{hand.value}]\n")
     end
+  end
+
+  def show_hand(hand)
+    puts hand.cards
   end
 
   def player_splits_notice
@@ -172,6 +169,10 @@ module UiHelper
 
   def wrong_answer
     puts "Please, specify correct answer"
+  end
+
+  def spacer
+    puts "\n\n"
   end
 
   def show_options(options)

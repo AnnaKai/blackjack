@@ -18,6 +18,7 @@ class Player
     bet >= 10 && bet <= @bankroll
   end
 
+  # insurance bet
   def side_bet
     side_bet = first_hand.bet / 2
     first_hand.insurance_bet += side_bet

@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift File.dirname(__FILE__)
-
+require "constants"
 require "ui"
 
 require "deck"
@@ -12,6 +12,7 @@ require "dealer"
 class Game
 
   include UiHelper
+  include Constants
 
   attr_accessor :player, :dealer, :deck
 
@@ -161,9 +162,9 @@ class Game
     new_hand = player.split(hand)
     hand.add_card(@deck.deal_card)
     new_hand.add_card(@deck.deal_card)
-    puts hand.cards
+    show_hand(hand)
     hand_value_reminder(hand)
-    puts new_hand.cards
+    show_hand(new_hand)
     hand_value_reminder(new_hand)
     player_decides
   end
@@ -172,7 +173,7 @@ class Game
     player_dd_notice
     player.place_bet(hand, player.first_hand.bet)
     hand.add_card(@deck.deal_card)
-    puts hand.cards
+    show_hand(hand)
     hand_value_reminder(hand)
     if hand.value > MAX_POINTS
       player_busts
@@ -186,7 +187,7 @@ class Game
   def player_hits(hand)
     player_hits_notice
     @player.hit(hand, @deck.deal_card)
-    puts hand.cards
+    show_hand(hand)
     hand_value_reminder(hand)
     if hand.value > MAX_POINTS
       hand_busts
@@ -313,7 +314,7 @@ class Game
   end
 
   def player_busts
-    player_busts
+    player_busts_notice
     sleep(1)
     play_more?
   end
