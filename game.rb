@@ -72,7 +72,7 @@ class Game
   def clear_table
     @player.reset_hands
     @dealer.hand = Hand.new
-    @deck.build_shoe(1); @deck.shuffle! if @deck.need_extra?
+    (@deck.build_shoe(1); @deck.shuffle!) if @deck.need_extra?
   end
 
   def initial_bet

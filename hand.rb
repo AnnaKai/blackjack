@@ -17,8 +17,7 @@ class Hand
   end
 
   def value
-    points = 0
-    @cards.each { |card| points += card.value }
+    points = @cards.each.sum(&:value)
     @cards.select { |card| card.rank == "Ace" }.count.times do
       points -= 10 if points > MAX_POINTS
     end
