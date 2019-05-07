@@ -1,5 +1,8 @@
+require "constants"
 # A Player Hand
 class Hand
+
+  include Constants
 
   attr_accessor :cards, :bet, :insurance_bet
 
@@ -17,13 +20,13 @@ class Hand
     points = 0
     @cards.each { |card| points += card.value }
     @cards.select { |card| card.rank == "Ace" }.count.times do
-      points -= 10 if points > 21
+      points -= 10 if points > MAX_POINTS
     end
     points
   end
 
   def bust?
-    value > 21
+    value > MAX_POINTS
   end
 
   def just_dealt?
@@ -35,6 +38,6 @@ class Hand
   end
 
   def blackjack?
-    just_dealt? && value == 21
+    just_dealt? && value == MAX_POINTS
   end
 end
