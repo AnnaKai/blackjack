@@ -1,19 +1,17 @@
+require "card"
+
 # Just 52 cards. No Joker
 class Deck
 
   attr_reader :cards
 
-  RANKS = [*2..10, "Jack", "Queen", "King", "Ace"].freeze
-  SUITS = %w[Clubs Diamonds Hearts Spades].freeze
-
   def initialize(num_decks = 1)
-    @cards = []
-    build_shoe(num_decks)
+    @cards = build_shoe(num_decks)
   end
 
   def build_shoe(num)
-    num.times do
-      RANKS.map { |rank| SUITS.map { |suit| @cards << Card.new(rank, suit) } }
+    num.times.each_with_object([]) do |i, arr|
+      Card::RANKS.map { |rank| Card::SUITS.map { |suit| arr << Card.new(rank, suit) } }
     end
   end
 
