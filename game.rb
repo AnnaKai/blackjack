@@ -20,7 +20,7 @@ class Game
     @deck = Deck.new
     @deck.shuffle!
     @dealer = Dealer.new("Dealer")
-    @player = Player.new("Croupier")
+    @player = Player.new("")
     @game_over = false
   end
 
@@ -65,8 +65,7 @@ class Game
   end
 
   def ask_name
-    ask_name_notice
-    @player.name = gets.chomp
+    @player.name = ask(ask_name_notice) while @player.name.empty?
   end
 
   def clear_table
@@ -77,10 +76,7 @@ class Game
 
   def initial_bet
     bet = 0
-    until player.valid?(bet)
-      ask_bet
-      bet = gets.to_i
-    end
+    bet = ask_bet until player.valid?(bet)
     player.place_bet(player.first_hand, bet)
   end
 
@@ -134,7 +130,7 @@ class Game
       available_options_notice(hand_num)
       hand_value_reminder(hand)
       show_options(available_options)
-      answer = gets.chomp
+      answer = input
     end
     case answer
     when "s" then player_stands
@@ -261,8 +257,7 @@ class Game
     answers = %w[y n]
     answer = ""
     until answers.include? answer
-      ask_insurance
-      answer = gets.chomp.downcase
+      ask(ask_insurance)
       case answer
       when "y" then @player.side_bet
       when "n" then return
@@ -322,9 +317,8 @@ class Game
     else
       answers = %w[y n]
       answer = ""
-      until answers.include?answer
-        ask_play_again
-        answer = gets.chomp.downcase
+      until answers.include? answer
+        answer = ask(ask_play_again)
         case answer
         when "y" then new_round
         when "n" then @game_over = true

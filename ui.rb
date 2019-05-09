@@ -15,6 +15,7 @@ module UiHelper
   def ask_bet
     dealer_says("You have $#{@player.bankroll}. How much would you like to bet?")
     hint("[Specify a bet between $10 and $#{@player.bankroll}]")
+    gets.to_i
   end
 
   def ask_name_notice
@@ -66,7 +67,7 @@ module UiHelper
   end
 
   def dealer_says(message)
-    puts "#{@dealer.name}: #{message}\n"
+    puts "#{@dealer.name}: #{message}"
   end
 
   def dealer_shows_bc
@@ -164,6 +165,10 @@ module UiHelper
 
   def ask(question)
     puts "#{question} "
+    input
+  end
+
+  def input
     gets.chomp
   end
 
