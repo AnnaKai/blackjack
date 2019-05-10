@@ -180,6 +180,10 @@ module UiHelper
     puts "\n\n"
   end
 
+  def pause(time)
+    sleep(time)
+  end
+
   def show_options(options)
     options.map { |option| puts "'#{option[0]}' for #{option[1]}" }.join(", ")
   end
