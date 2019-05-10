@@ -6,6 +6,7 @@ module UiHelper
 
   def welcome
     puts "\n>>> Welcome to The BlackJack Game! <<<\n\n"
+    pause(1)
   end
 
   def welcome_player
@@ -28,6 +29,7 @@ module UiHelper
 
   def dealing_cards_notice
     puts "\nDealing cards...\n"
+    pause(1)
   end
 
   def dealer_shows_first_hand
@@ -38,6 +40,7 @@ module UiHelper
 
   def dealer_hits_notice
     dealer_says("Dealer takes one more card...")
+    pause(1)
   end
 
   def dealer_shows_cards
@@ -82,6 +85,7 @@ module UiHelper
 
   def dealer_checks_notice
     puts "Dealer's checking his cards...\n"
+    pause(2)
   end
 
   def dealer_busts_notice
@@ -101,6 +105,7 @@ module UiHelper
       show_hand(hand)
       hint("[Your Hand is currently valued at: #{hand.value}]\n")
     end
+    pause(1)
   end
 
   def show_hand(hand)
@@ -125,6 +130,7 @@ module UiHelper
 
   def player_busts_notice
     dealer_says("Sorry, #{@player.name}, you lost!")
+    pause(1)
   end
 
   def player_wins_notice

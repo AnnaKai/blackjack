@@ -35,7 +35,6 @@ class Game
 
   def intro
     welcome
-    pause(1)
   end
 
   def set_player
@@ -82,7 +81,6 @@ class Game
 
   def deal_cards
     dealing_cards_notice
-    pause(1)
     2.times do
       @player.first_hand.add_card(@deck.deal_card)
       @dealer.hand.add_card(@deck.deal_card)
@@ -92,7 +90,6 @@ class Game
   def show_hands
     card_value_notice(@player.name)
     player_shows_hands
-    pause(1)
     dealer_shows_first_hand
   end
 
@@ -102,7 +99,6 @@ class Game
 
   def dealer_decides
     dealer_checks_notice
-    pause(2)
     if @dealer.hand.blackjack?
       dealer_shows_bc
       pay_insurance if insurance?
@@ -206,7 +202,6 @@ class Game
 
   def dealer_hits
     dealer_hits_notice
-    pause(1)
     @dealer.hand.add_card(@deck.deal_card)
     card_value_notice(@dealer.name)
     dealer_shows_cards
@@ -215,7 +210,6 @@ class Game
   end
 
   def set_result
-    pause(1)
     if dealer.hand.bust?
       dealer_busts_notice
       player_wins
@@ -306,7 +300,6 @@ class Game
 
   def player_busts
     player_busts_notice
-    pause(1)
     play_more?
   end
 
