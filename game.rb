@@ -139,7 +139,7 @@ class Game
   def create_options(hand)
     options = STAND_KEY_MAP.merge(HIT_KEY_MAP)
     options.merge!(DOUBLE_DOWN_KEY_MAP) if hand.just_dealt? && player.hands.length == 1 && player.bankroll >= hand.bet
-    options.merge!(SPLIT_KEY_MAP) if hand.splittable? && player.hands.length <= MAX_HANDS && player.bankroll >= hand.bet
+    options.merge!(SPLIT_KEY_MAP) if hand.splittable? && player.hands.length < MAX_HANDS && player.bankroll >= hand.bet
     options
   end
 
